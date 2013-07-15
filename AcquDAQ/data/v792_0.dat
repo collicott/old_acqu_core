@@ -1,0 +1,94 @@
+##--Rev 	JRM Annand...10th Feb 2007
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+## Registers...512 data memory, 34 control, 32 threshold, 9 ROM
+##              Hex Base	#Registers	Module type
+BaseSetup:	0		588		ADC
+##
+##		Hex Offset  DW         AM	Datum	Number
+## memory 
+Register: 	0           32         09	0	512
+## Firmware revision
+Register:	0x1000      16         09
+## Geographical address
+Register:	0x1002      16         09
+## MCST/CBLT address
+Register: 	0x1004      16         09
+## Bit set/clear 1: bit 3-berr, 4-sel.addr, 7-soft.reset
+Register:	0x1006      16         09	0x80
+Register:	0x1008      16         09	0x80
+## IRQ bits 0-2
+Register:	0x100A      16         09
+## IRQ vector bits 0-7
+Register:	0x100C      16         09
+## Status1 read only
+## 0-dready, 1-gdready, 2-busy, 3-gbusy, 4-amnesia, 5-purged,
+## 6-termon, 7-termoff, 8-ev.ready
+Register:	0x100E      16         09
+## Ctrl1
+## 2-blkend, 4-prog.reset, 5-berr.enable, 6-align64
+Register:	0x1010      16         09
+## Addr decoder high
+Register:	0x1012      16         09
+## Addr decoder low
+Register:	0x1014      16         09
+## Single shot reset default 0
+Register:	0x1016      16         09
+## MCST/CBLT Ctrl default 0
+Register:	0x101A      16         09
+## Event# driven IRQ. bits 0-4. value 0 = off
+Register:	0x1020      16         09
+## Status2
+## 1-buff.empty, 2-buff-full, 4-7 should be 0010 for V792
+Register:	0x1022      16         09
+## Event counter LSB
+Register:	0x1024      16         09
+## Event counter MSB
+Register:	0x1026      16         09
+## Increment event
+Register:	0x1028      16         09
+## Increment offset (readout buffer)
+Register:	0x102A      16         09
+## Load test register
+Register:	0x102C      16         09
+## FC Window bits 0-9 (N) Window = 7 + N/32 (micro-sec)
+Register:	0x102E      16         09	0x0
+## Bit-set 2:
+## 0=test-mem, 1=offline, 2=clear=data, 3=disable-overflow-suppress
+## 4=disable-low-thresh, 6=sel-test-reg, 7=enable-sliding-scale
+## 8=zero-supp-resolution 11=auto-incr-enable(def) 12=empty-enable(def)
+## 13=slide-scale-sub 14=event-inc-all-trig(def)
+Register:	0x1032      16         09
+## Reset of bit-set 2
+Register:	0x1034      16         09
+## Memory test address reg. Bits 0-10
+Register:	0x1036      16         09
+## Memory test word MSB Bits 0-15
+Register:	0x1038      16         09
+## Memory test word LSB
+Register:	0x103A      16         09
+## Crate select Bits 0-7
+Register:	0x103C      16         09
+## Test-event write
+Register:	0x103E      16         09
+## Event counter reset
+Register:	0x1040      16         09
+## Set QDC pedestal current Bits 0-7. Def=180, Min~60
+Register:	0x1060      16         09
+##Memory test address Bits 0-10
+Register:	0x1064      16         09
+## Trigger test ADC convertion
+Register:	0x1068      16         09
+## DAC sliding scale default
+Register:	0x106A      16         09
+## Value from Block-A ADC
+Register:	0x1070      16         09
+## Value from Block-B ADC
+Register:	0x1072      16         09
+## ADC storage thresholds, 1/channel
+Register:	0x1080      16         09	10	32
+## ROM ID Registers
+Register:	0x8026      32         09	0	9

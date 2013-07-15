@@ -1,0 +1,17 @@
+#!/bin/tcsh 
+#
+if ( -l ${acqu_sys}/AcquDAQ/vme/libCAENVME.so ) then
+    setenv CAENVME_LIB ${acqu_sys}/AcquDAQ/vme/libCAENVME.so
+    setenv CAENVME_COMP "-D AD_CAENLIB"
+else
+    setenv CAENVME_LIB
+    setenv CAENVME_COMP
+endif
+if ( -l ${acqu_sys}/AcquDAQ/vme/libCAENHVWrapper.so  ) then
+    setenv CAENVME_LIB "${CAENVME_LIB} ${acqu_sys}/AcquDAQ/vme/libCAENHVWrapper.so ${acqu_sys}/AcquDAQ/vme/libhscaenet.so"
+    setenv CAENVME_COMP "${CAENVME_COMP} -D AD_CAENHV"
+endif
+setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${acqu_sys}/AcquDAQ/vme
+echo CAEN LIBS: $CAENVME_LIB
+echo CAEN COMPS: $CAENVME_COMP
+exit

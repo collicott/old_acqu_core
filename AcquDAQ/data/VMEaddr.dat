@@ -1,0 +1,180 @@
+##----------------------------------------------------------------------------
+##			Acqu++
+##		Data Acquisition and Analysis
+##			for
+##		Nuclear Physics Experiments
+##
+##		C/C++ UNIX-Based DAQ
+##		supported on PPC/lynxos, PC/linux
+##		Preferred compiler g++
+##
+##		    *** VMEaddr.list ***
+##--Description
+##      Parameter data file
+##	Specify Physical Addresses of VMEbus modules
+##      Largely replaces function of vme_desc.c
+##
+##--Author	JRM Annand	24th Oct 2002
+##--Update	JRM Annand
+##
+##---------------------------------------------------------------------------
+#
+#	ALL NUMBERS IN HEXADECIMAL
+#
+# CES CBD8210 CAMAC Branch Driver
+# VMEbus address set by front-panel switch Addr=0x80000 + n*0x800000
+# VMEbus interrupt Level 4 (0 = no interrupt), Vector jumpered to c3
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  cbd0	00800000	80000	39	c3	4	0000
+  cbd1	00880000	80000	39	0	0	0000
+  cbd2	00900000	80000	39	0	0	0000
+  cbd3	00980000	80000	39	0	0	0000
+  cbd4	00a00000	80000	39	0	0	0000
+  cbd5	00a80000	80000	39	0	0	0000
+  cbd6	00b00000	80000	39	0	0	0000
+  cbd7	00b80000	80000	39	0	0	0000
+#
+# HSM8170 3-port RAM, ECL-bus access: 32-bit FASTBUS, 16-bit FERA
+# No interrupt for now....is in principle possible
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  hsm0	08400000	200000	09	0	0	0001
+  hsm1	08800000	200000	09	0	0	0001
+  hsm2	07000000	200000	09	0	0	0001
+  hsm3	06000000	200000	09	0	0	0001
+#
+# VIC8250 VIC-bus transmitter/receiver VME-VME Interconnections
+# No interrupt for now....is in principle possible
+# Device code...see $acqu_sys/include/mod_index.h
+# slv0-7 devices provide mapping to buffer memories of slave VIC's
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  vic0	00b00000	100000	39	0	0	0002
+  slv0	0a000000	100000	09	0	0	0003
+  slv1	0a100000	100000	09	0	0	0003
+  slv2	0a200000	100000	09	0	0	0003
+  slv3	0a300000	100000	09	0	0	0003
+  slv4	0a400000	100000	09	0	0	0003
+  slv5	0a500000	100000	09	0	0	0003
+  slv6	0a600000	100000	09	0	0	0003
+  slv7	0a700000	100000	09	0	0	0003
+#
+# LeCroy 1131 VME-1821 FASTBUS SMI Interface
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  lrs0	00900000	100000	39	0	0	0100
+#
+# Mainz KPh VME-1821 FASTBUS SMI Interface
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  kph0	00c0fe00	200	39	0	0	0400
+  kph1	00c1fe00	200	39	0	0	0400
+#
+# INFN-Pavia DSP56001 Readout of MIDAS Si-strip array
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  dsp0	06600000	fffff	09	0	0	0500
+#
+# Muenchen FIADC-64. 64-channel fast integrating QDC
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  fia0	00701300	10	39	0	0	0600
+#
+# Freiburg Catch equipped with F1 TDC 128 chan multihit.
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  cat0	e0300000	10000	09	0	0	0601
+  cat1  e0310000        10000   09      0       0       0601
+  cat2  e0320000        10000   09      0       0       0601
+  cat3  e0330000        10000   09      0       0       0601
+  cat4  e0340000        10000   09      0       0       0601
+  cat5  e0350000        10000   09      0       0       0601
+  cat6  e0360000        10000   09      0       0       0601
+  cat7  e0370000        10000   09      0       0       0601
+  cat8  e0380000        10000   09      0       0       0601
+  cat9  e0390000        10000   09      0       0       0601
+  cat10 e03a0000        10000   09      0       0       0601
+  cat11 e03b0000        10000   09      0       0       0601
+  cat12 e03c0000        10000   09      0       0       0601
+  cat13 e03d0000        10000   09      0       0       0601
+  cat14 e03e0000        10000   09      0       0       0601
+  cat15 e03f0000        10000   09      0       0       0601
+#
+# Freiburg Catch equipped with Scaler 128 chan multihit.
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  cas0	e0200000	10000	09	0	0	0602
+  cas1  e0210000        10000   09      0       0       0602
+  cas2  e0220000        10000   09      0       0       0602
+  cas3  e0230000        10000   09      0       0       0602
+  cas4  e0240000        10000   09      0       0       0602
+  cas5  e0250000        10000   09      0       0       0602
+  cas6  e0260000        10000   09      0       0       0602
+  cas7  e0270000        10000   09      0       0       0602
+  cas8  e0280000        10000   09      0       0       0602
+  cas9  e0290000        10000   09      0       0       0602
+  cas10 e02a0000        10000   09      0       0       0602
+  cas11 e02b0000        10000   09      0       0       0602
+  cas12 e02c0000        10000   09      0       0       0602
+  cas13 e02d0000        10000   09      0       0       0602
+  cas14 e02e0000        10000   09      0       0       0602
+  cas15 e02f0000        10000   09      0       0       0602
+#
+# CAEN 1465/1488 64 chan 9U QDC/TDC
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  cae0	00e00000	1000	09	0	0	0300
+  cae1	00e10000	1000	09	0	0	0301
+#
+# CAEN V792 QDC
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  cav0	ee000000	2000	09	0	0	0302
+#
+# CATCH TCS (Trigger controll system supervisor)
+# Be aware that there are several non-software-compatible
+# versions of this unit
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  tcs0	00e00000	1000	39	0	0	0604
+  tcs1  00e30000	1000	39	0	0	0604
+#
+# Muenchen GESICA readout controller for SG-ADC
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  ges0	00dd0000	100	39	0	0	0603
+  ges1	00dd1000	100	39	0	0	0603
+  ges2	00dd2000	100	39	0	0	0603
+  ges3	00dd3000	100	39	0	0	0603
+#
+# I2C Controller for VASA-style discriminators and logic
+# Name  Addr            Size    AM      Vector  Level   Device-code
+  i2c0  0000f800        100     29      0       0       0700
+#
+# SIS 3820 Latch, I/O register
+# Name  Addr            Size    AM      Vector  Level   Device-code
+  sis0  38000000        100     09      0       0       0800
+#
+# NULL device...must come last in this list
+# No interrupt for now
+# Device code...see $acqu_sys/include/mod_index.h
+#
+# Name	Addr		Size	AM	Vector	Level	Device-code
+  null	00000000	00	00	0	0	0000

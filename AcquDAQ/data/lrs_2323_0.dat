@@ -1,0 +1,24 @@
+##--Author	JRM Annand... 9th Feb 2006  New DAQ software
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+##              Dummy Base	#Registers	Module Type
+BaseSetup:	0		4		SlowCtrl
+##
+## CNAFS...delay registers (F17) and start registers (F25)
+##		Datum	F	A0	A1	Register Type
+CAMAC-CNAF:	0	17	0	1	Init
+CAMAC-CNAF:	0	25	0	1	Init	
+#
+## Specify delay register contents
+## latch = 1 flip-flop mode
+## delay = delay * 10**exp (ns)
+## delayed output width 0-10ns, 1-30ns, 2-100ns, 3-300ns
+##		index	latch	delay	exp	del-width
+Gate-Delay:	0	0	100	1	2		
+Gate-Delay:	1	0	250	0	1		
+##
+#	End of File
+#

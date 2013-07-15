@@ -1,0 +1,22 @@
+# Path used by dynamic loader to find shared libraries
+Unix.*.Root.DynamicPath:    .:$acqu/lib/$ACQU_OS_NAME:$acqu_sys/lib/$ACQU_OS_NAME:$ROOT/lib:$ROOTSYS/lib
+Unix.*.Root.MacroPath:      .:$acqu/root/macros:$acqu_sys/AcquRoot/macros:$acqu_sys/AcquMC/macros:$acqu_sys/AcquDAQ/macros:$ROOT/macros:$ROOTSYS/macros:
+
+# Activate memory statistics
+Rint.Root.MemStat:       1
+Rint.Load:               rootalias.C
+Rint.Logon:              rootlogon.C
+Rint.Logoff:             rootlogoff.C
+
+#Rint.Canvas.UseScreenFactor: true
+#Rint.Canvas.MoveOpaque:      false
+#Rint.Canvas.ResizeOpaque:    false
+#Rint.Canvas.HighLightColor:  5
+
+# Stuff for documentation
+Root.Html.SourceDir:	$acqu/root/src:$acqu_sys/AcquRoot/src:$acqu_sys/AcquMC/src:$acqu_sys/AcquDAQ/src
+Root.Html.Root: 	/cern/root/doc/htmldoc
+Root.Html.Author:	//--Author
+Root.Html.LastUpdate: 	//--Update
+Root.Html.Copyright: 	//--C
+Root.Html.Description: 	//--Description

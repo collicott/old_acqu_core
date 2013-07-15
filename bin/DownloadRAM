@@ -1,0 +1,22 @@
+#!/bin/sh
+if [ "$1" = "" ]; then
+  echo "Usage... DownloadRAM.sh XX"
+  echo "Where integer parameter XX is the Trigger Settings ID from Database..."
+  echo "See: http://wwwa2.kph.uni-mainz.de/intern/trigger/triggersettings.php"
+  exit 0
+fi
+cd $acqu/data
+pwd
+echo " "
+echo "Trigger Settings ID $1 choosen."
+echo " "
+echo "Download RAM L1 content from webserver"
+echo " "
+wget -O TriggerRAML1_$1.dat "http://wwwa2.kph.uni-mainz.de/intern/trigger/generateRAM.php?idTriggerSettings=$1&idTriggerLevels=1"
+echo "Download finished."
+echo " "
+echo " "
+echo "Download RAM L2 content from webserver"
+echo " "
+wget -O TriggerRAML2_$1.dat "http://wwwa2.kph.uni-mainz.de/intern/trigger/generateRAM.php?idTriggerSettings=$1&idTriggerLevels=2"
+echo "Download finished."

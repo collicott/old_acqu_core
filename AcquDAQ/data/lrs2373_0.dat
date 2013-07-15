@@ -1,0 +1,26 @@
+##--Author	JRM Annand... 9th Feb 2006  New DAQ software
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+##              Dummy Base	#Registers	Module Type
+BaseSetup:	0		5		SlowCtrl
+##
+##	Lookup memory setup Addr ffff = load all memory with datum
+##	Addr	Datum
+RAM:	ffff	c0		
+##
+RAM:	01	f7	
+RAM:	02	ff
+##
+## Set output mode, 0x40 latched, 0x60 pulse
+CCR:	60
+##
+## Readout CNAFS...input pattern and output pattern
+##		Datum	F	A0	A1	Register Type
+CAMAC-CNAF:	0	0	1	1	IRQ	
+CAMAC-CNAF:	0	0	3	3	IRQ	
+#
+#	End of File
+#

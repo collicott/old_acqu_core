@@ -1,0 +1,164 @@
+#!/bin/csh
+#
+#  ACQU  login file for T-C shell.
+#
+#	I Anthony	26th Jul 1993	Added def of CERN environment
+#					variable for ntuple_store
+#	JRM Annand	21st Dec 1993	ACQU v2.2, CERNlib v93d
+#					correct ACQUROOT for acqusys
+#	JRM Annand	21st Jan 1994	Lund SUN OS
+#	JRM Annand	 6th Apr 1994	Improve portability
+#	JRM Annand	 1st Jun 1995	2v4 update
+#	JRM Annand	 4th Aug 1995	Add Mainz A2
+#	JRM Annand	28th Jun 1996	3v0 update
+#       JRM Annand      14th Jul 1997   3v1 update
+#       Sadiq / Lang     3rd Oct 1997   3v1 update
+#       F Sadiq         20th Nov 1997   3v1b only change $acquversion 
+#                                       for a new version
+#	Ken Livingston	30th Nov 1997	3v2 update
+#       JRM Annand      17th Dec 1997   Merge 3v1b/3v2 and cleanup
+#       JRM Annand      19th Dec 1999   g2c instead of f2c (LIBFOR)
+#       Ken Livingston  15th Mar 2005   Test for $ACQURC to load alternative 
+#                                       .acqurc
+#       Ken Livingston  22nd Feb 2006   Added variable "usesubdirs"
+#                                       ( = NO, by default) "standard mode"
+#                                       ( = YES) run $acqu/bin/uname_clas
+#                                       to set ACQU_OS_NAME
+#                                       if subdirs don't already exist
+#                                       make subdirs bin/$ACQU_OS_NAME,
+#                                       lib/$ACQU_OS_NAME,obj/$ACQU_OS_NAME,
+#                                       deps/$ACQU_OS_NAME.
+#                                       Add $acqu/bin/$ACQU_OS_NAME and
+#                                       $acqu_sys/bin/$ACQU_OS_NAME to PATH 
+#                                       Required where different binaries
+#                                       needed from the same source tree.
+#                                       (Eg. for 64 and 32 bit versions
+#       JRM Annand      18th Jan 2007   Change LDFLAGS....AR_LDFLAGS
+#       JRM Annand      23rd Aug 2007   $acqu_usesubdirs and general tidy up
+#       JRM Annand      17th Jun 2008   LD_LIBRARY_PATH, remove Xlib spec.
+#       JRM Annand      13th Jan 2009   A bit more testing
+#############################################################################
+#  
+#       Execute as follows...normally you would be running the tcsh shell
+#       and a line similar to the following would be inserted in your
+#       .tcshrc file
+#
+#       source /home/acqusys/acquversion/acqu/acqu_setup
+#
+#       where /home/acqusys is the system-dependent home directory
+#       of the ACQU system account and acquversion is the version of
+#       ACQU which you wish to run....see 4 lines below.
+#
+#  Set up values of required environment variables:
+#
+setenv acquversion 4v6
+setenv acquversionID 4v6.04.03.13
+setenv acqudate "4th March 2013"
+echo ""
+echo "********** acqu_setup being executed  **********"
+echo "           version: " $acquversion
+#
+#  Check for user-specific ACQU setup
+#  Normally contained in ~/.acqurc. If this file
+#  does not exist, execute the default setting
+#  The defaults echo the central GLASGOW Linux system
+#
+if ( $?ACQURC ) then
+    if ( -e $ACQURC ) then
+	echo Executing ACQU setup $ACQURC
+	source $ACQURC
+    endif
+else if ( -e ~/.acqurc ) then
+    echo Executing user-specific ACQU setup ~/.acqurc
+    source ~/.acqurc
+else
+    echo Executing default ACQU setup
+    setenv acqu_site $HOST
+    setenv ACQU_SYSROOT /home/acqusys/$acquversion      # ACQU home dir
+    setenv CERNROOT /cern/pro                           # CERNlib stuff
+    if ( $HOSTTYPE == i386-linux ) then
+        setenv CPUTYPE __LINUX                # Linux default
+    else if ( $HOSTTYPE == sun4 ) then
+        setenv CPUTYPE __SPARC                # SPARC station
+    else
+        setenv CPUTYPE __LINUX                # Default Linux
+    endif
+    setenv CCCOMP g++                         # C++ compiler
+    setenv acqu_debugger gdb		      # The default debugger
+    setenv XLIB /usr/X11R6/lib                # The default X library
+    if ( $USER == 'acqu') then
+	setenv ACQUROOT $ACQU_SYSROOT	      # ACQU system root directory
+    else
+	setenv ACQUROOT	~		      # ACQU users root directory
+    endif
+# gdb default debugger
+    setenv acqu_debugger gdb
+# compile code with debug flag
+    setenv acqu_debug -g
+endif
+#
+#	Set up compiler and linker flags
+#
+setenv CCCFLAGS '-c -o $@'
+setenv CCCFLAGS_D '-c -g -o $@'
+setenv AR_LDFLAGS '-v -o $B/$@'
+setenv AR_LDFLAGS_D '-v -g -o $B/$@'
+#
+#
+# ACQU system variables
+setenv acqu_sys	$ACQU_SYSROOT/acqu
+# ACQU users variable...note change for acqusys
+setenv acqu	$ACQUROOT/acqu
+
+if ( $?acqu_usesubdirs ) then
+    echo Binary architecture-dependent sub-directories have been set $acqu_usesubdirs
+else
+    setenv acqu_usesubdirs 'NO'
+    echo Assume no binary subdirectories as default
+endif
+
+if ( $acqu_usesubdirs == 'YES' ) then
+    # Extra env variable to allow for different OS versions in subdirs
+    #
+    # This script tries to get a unique Linux OS name based on Flavour
+    # (eg. Redhat SuSe, Debian) ...
+    # and Version eg 4, and machine type ( at the moment 32 or 64 bit).
+    # eg for Scientfic Linux 4.1 on 32 bit we get  LinuxRH4,
+    # on 64 bit we get Linux64RH4
+    # may need improving for wider applicability
+    setenv ACQU_OS_NAME       `${acqu_sys}/bin/AcquUname`
+    echo System type auto-determined to be $ACQU_OS_NAME
+
+    # The Makefiles will use this to create subdirs under bin, obj, lib ...
+    # Here we make the appropriate subdires if they don't exist
+    if (! -d ${acqu}/bin/${ACQU_OS_NAME} ) mkdir -p ${acqu}/bin/${ACQU_OS_NAME}
+    if (! -d ${acqu}/lib/${ACQU_OS_NAME} ) mkdir -p ${acqu}/lib/${ACQU_OS_NAME}
+    if (! -d ${acqu}/obj/${ACQU_OS_NAME} ) mkdir -p ${acqu}/obj/${ACQU_OS_NAME}
+    if (! -d ${acqu}/deps/${ACQU_OS_NAME} ) mkdir -p ${acqu}/deps/${ACQU_OS_NAME}
+
+else
+    setenv ACQU_OS_NAME
+    # The Makefiles will use this to create subdirs under bin, obj, lib ...
+    # Here we make the appropriate subdires if they don't exist
+    if (! -d ${acqu}/bin ) mkdir -p ${acqu}/bin
+    if (! -d ${acqu}/lib ) mkdir -p ${acqu}/lib
+    if (! -d ${acqu}/obj ) mkdir -p ${acqu}/obj
+    if (! -d ${acqu}/deps ) mkdir -p ${acqu}/deps
+endif    
+#
+#	Extend path for ACQU directories
+#
+set path = ($path ${acqu}/bin/${ACQU_OS_NAME} ${acqu_sys}/bin/${ACQU_OS_NAME} $acqu/bin $acqu_sys/bin )
+setenv  LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:${acqu}/lib/${ACQU_OS_NAME}:${acqu_sys}/lib/${ACQU_OS_NAME}"
+#
+# Stuff for connecting to CAEN libraries
+source ${acqu_sys}/AcquDAQ/vme/LinkCAENlibs
+#
+echo "ACQU $acquversion ($acqudate) environment setup executed"
+echo "ACQU incorporates:"
+echo "AcquRoot C++ Experimental data analysis and reconstruction"
+echo "AcquMC   C++ Monte Carlo event generator"
+echo "AcquDAQ  C++ Data acquisition"
+echo "*********************************************************"
+echo
+#######

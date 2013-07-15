@@ -1,0 +1,89 @@
+#!/bin/tcsh 
+#
+#	Simple utility to get differences in
+#	LynxOS acqu versions
+#	usage acqudiff dir1 dir2
+if ( $#argv != 2 ) then
+    echo Utility to highlight C-code differences in ACQU versions
+    echo Usage....acqudiff dirspec1 dirspec2
+    exit
+endif
+set src1 = ~/${1}/acqu/
+set src2 = ~/${2}/acqu/
+set out = ~/$1-$2
+echo Comparing directories $src1 -- $src2 into $out
+#
+#  Check directories for output
+#
+if ( ! -e $out ) mkdir $out
+if ( ! -e $out/src ) mkdir $out/src
+if ( ! -e $out/src/c ) mkdir $out/src/c
+if ( ! -e $out/src/cc ) mkdir $out/src/cc
+if ( ! -e $out/src/f ) mkdir $out/src/f
+if ( ! -e $out/include ) mkdir $out/include
+if ( ! -e $out/include ) mkdir $out/include
+if ( ! -e $out/include/c ) mkdir $out/include/c
+if ( ! -e $out/include/cc ) mkdir $out/include/cc
+#
+#  List of files to compare
+#
+set src = ( \
+src/c/buff_init.c   src/c/ntuple_buff.c   src/c/udp_def.c \
+src/c/buttons.c     src/c/ntuple_store.c  src/c/udp_def_u.c \
+src/c/cond_def.c    src/c/numerical.c     src/c/udp_util.c \
+src/c/cond_def_u.c  src/c/plot_cern.c     src/c/udp_util_u.c \
+src/c/control.c     src/c/rdata_buff.c    src/c/uds_def.c \
+src/c/controlh.c    src/c/rdata_store.c   src/c/uds_def_n.c \
+src/c/ctrl_macro.c  src/c/region.c        src/c/uds_def_u.c \
+src/c/dmem_def.c    src/c/server_util.c   src/c/uds_util.c \
+src/c/flush.c       src/c/sort.c          src/c/uds_util_n.c \
+src/c/hardcopy.c    src/c/sort_init.c     src/c/uds_util_u.c \
+src/c/hardware.c    src/c/status.c        src/c/ws_ipc.c \
+src/c/hbook_def.c   src/c/sys_util.c \
+src/c/history.c     src/c/tapedir.c \
+src/cc/DataServer.cc  src/cc/Names.cc            src/cc/UdsDefN.cc \
+src/cc/DetElement.cc  src/cc/ServerBase.cc       src/cc/UdsDefU.cc \
+src/cc/DetLayer.cc    src/cc/ServerInherited.cc  src/cc/UdsUtilN.cc \
+src/cc/Detector.cc    src/cc/SysUtil.cc          src/cc/UdsUtilU.cc \
+src/cc/Experiment.cc  src/cc/UdpDefU.cc          src/cc/UserNames.cc \
+src/cc/GenericFn.cc   src/cc/UdpUtilU.cc \
+src/f/hbook_fn.f  src/f/higz_iface.f  src/f/rzfile.f  src/f/test.f \
+include/c/acqu_descrip.h  include/c/higz_def.h    include/c/udp_def.h \
+include/c/acqu_typedef.h  include/c/history.h     include/c/udp_def_u.h \
+include/c/buff_type.h     include/c/lund_def.h    include/c/udp_util.h \
+include/c/cond_def.h      include/c/macro_def.h   include/c/udp_util_u.h \
+include/c/cond_def_u.h    include/c/mod_index.h   include/c/uds_def.h \
+include/c/ctrl_cmds.h     include/c/ntuple_def.h  include/c/uds_def_n.h \
+include/c/dbus_index.h    include/c/region_def.h  include/c/uds_def_u.h \
+include/c/dmem_def.h      include/c/rz_def.h      include/c/uds_util.h \
+include/c/dmem_module.h   include/c/sk_def.h      include/c/uds_util_n.h \
+include/c/fgl_def.h       include/c/spect_def.h   include/c/uds_util_u.h \
+include/c/hbook_def.h     include/c/sys_util.h    include/c/version.h \
+include/cc/AcquLinkDef.h  include/cc/Experiment.h       include/cc/UdpDefU.h \
+include/cc/AcquTypedef.h  include/cc/ExtAcquC.h         include/cc/UdpUtilU.h \
+include/cc/CondDefU.h     include/cc/ExtC.h             include/cc/UdsDefN.h \
+include/cc/DataFormats.h  include/cc/GenericFn.h        include/cc/UdsDefU.h \
+include/cc/DetElement.h   include/cc/ServerBase.h       include/cc/UdsUtilN.h \
+include/cc/DetLayer.h     include/cc/ServerInherited.h  include/cc/UdsUtilU.h \
+include/cc/Detector.h     include/cc/ServerUtil.h       include/cc/UserData.h \
+include/cc/ExpTypes.h     include/cc/SysUtil.h \
+Makefile usermake \
+acqu_setup \
+bin/run_acqu \
+)
+#
+#  Init no. of files to compare and loop doing the comparison
+#
+@ i = $#src
+while ( $i )
+	diff $src1/$src[$i] $src2/$src[$i] > $out/$src[$i]
+	if ( -z $out/$src[$i] ) then
+		echo No change $src[$i]
+		rm $out/$src[$i]
+	endif
+	echo $i
+	@ i--
+end
+cd $out
+a2ps -4 -Afill -odiff.ps src/c/*.c src/cc/*.cc src/f/*.f include/c/*.h include/cc/*.h bin/* Makefile acqu_setup
+exit

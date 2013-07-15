@@ -1,0 +1,81 @@
+#!/bin/sh
+#   extract the Operating System Type using the uname
+#   command. If we have SunOS, then we want to check
+#   for either Solaris or 4.1.x:
+#
+OS=`uname`
+#
+if [ ${OS} = SunOS ]; then
+#
+#     OS is SunOS:
+#     The following very ugly line will strip the firts number
+#     off the OS type.
+#
+   TYPE=`uname -r | sed 's/\./ /g' | awk '{print $1}' `
+#
+   if [ ${TYPE} = 4 ]; then
+      OS=${OS}${TYPE}
+   fi
+#
+elif [ ${OS} = Linux ]; then
+#
+# This is Linux, check for RedHat
+#
+
+    if [ `uname` = Linux ]; then
+
+	if [ -f /etc/redhat-release ]; then
+	    DISTRIB="RedHat"
+	fi
+	if  [ -f /etc/debian_version ]; then
+	    DISTRIB="Debian"
+	fi
+	if [ -d /etc/SuSEconfig ]; then
+	    DISTRIB="SuSE"
+	fi
+         
+    fi
+
+
+    if [ ${DISTRIB} = RedHat ]; then
+#   This is RedHat, check for version other than 6.n
+
+	if [ `uname` = Linux ] || [ `uname` = Linux_A ] ; then
+	    
+	    if [ -f /etc/redhat-release ]; then    
+		VERSION=`awk '/release/{if(loc=match($0,/Enterprise Linux /)){printf "EL"};print $3}' /etc/redhat-release`
+                #
+                # Red Hat Enterprise 3 is 99% equivalent to RH9
+                # If you want it to mimick RH9 uncomment these lines.
+                #
+                #    if [ $version == 'EL3' ]; then 
+                #       version='9'
+                #    fi
+    
+                #    totversion=`cat /etc/redhat-release | sed 's/.*release //' | awk '{print $1}'`
+	    else
+		totversion=0.0
+		VERSION=0.0
+	    fi
+
+          #  VERSION=`echo ${totversion} | awk -F. '{print $1}'`
+
+	  #echo ${VERSION}
+         
+	fi
+
+
+
+#       VERSION=`${ROOTBEER_SCRIPTS}/linux_version`
+	if [ `arch` = x86_64 ]; then
+	    ARCH='64'
+	else
+	    ARCH=''
+	fi
+
+	OS=${OS}${ARCH}RH${VERSION}
+    fi
+#
+fi
+#
+echo ${OS}

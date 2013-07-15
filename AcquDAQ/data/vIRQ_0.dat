@@ -1,0 +1,10 @@
+##--Rev 	JRM Annand... 1st Oct 2005  New DAQ software
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+##              Hex Base	#Registers	Module type
+BaseSetup:	0		0		S-Ctrl
+#	End of File
+#

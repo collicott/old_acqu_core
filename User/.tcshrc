@@ -1,0 +1,48 @@
+#       Setup ACQU and aliases
+#    Setup the ACQU environment
+if ($?prompt) then
+	source ~/dev/acqu/acqu_setup
+	setenv ROOTSYS /cern/root/v3.05.02
+	setenv ROOT ~/cern/root
+	set path = (. ~/bin /usr/local/bin $path /cern/pro/bin $ROOT/bin $ROOTSYS/bin)
+	setenv LD_LIBRARY_PATH .:$ROOTSYS/lib:$ROOT/lib
+        set nobeep
+        set prompt = "%m.%n> "
+	set notify
+	set history = 40
+	setenv PRINTER dup
+#	alias   precmd  'echo "]0;${HOST}: ${PWD}"'
+	alias   ken  'echo "]0;${HOST}: ${PWD}"'
+       	alias pd pushd
+	alias pop popd
+	alias vt52 "set term = vt52"
+	alias ti745 "set term = ti745 ; stty -tabs"
+	alias ti785 "set term = ti745 ; stty -tabs"
+	alias vt100 "set term = vt100 ; stty -tabs"
+	alias netscape /usr/local/netscape/netscape
+	alias more less
+#	alias ls "ls --color"
+#	eval `dircolors /etc/colorsrc`
+	alias pu 'rm *~;rm .*~;rm *.BAK;rm .*.BAK'
+	alias aps 'a2ps -4 -Ppsd \!*'
+	alias dvips 'dvips -o \!*.ps \!*'
+	alias cd 'cd \!*;echo $cwd'
+	alias latdel 'rm *.aux; rm *.dvi; rm *.log; rm -i *.ps'
+	alias rm rm -i
+	alias help man
+	alias aprocs 'ps x | grep sort;ps x | grep store'
+	alias man2ps 'man \!* | a2ps -2 -Ppsd'	
+	alias manps 'man -t \!* | lpr -l -Ppsd'
+	alias howps 'zcat /usr/doc/HOWTO/other-formats/ps/\!*\-HOWTO.ps.gz | lpr -Ppsd '
+	alias roothowps 'zcat /cern/howto/Howto\!*\.ps.gz | lpr -Ppsd'
+	alias how 'zcat /usr/doc/HOWTO/\!*\-HOWTO.gz | more'
+	alias howlist 'ls /usr/doc/HOWTO'
+	alias zprint 'zcat \!* | lpr -Ppsd'
+	alias ls 'ls --color'
+	alias kerm  'kermit -l /dev/ttyS0 -b 9600 -c'
+# set up F11 as escape key
+	xmodmap -e "keycode 113=Escape"
+# set up a lot of fancy name completion stuff
+#	source /etc/complete.tcsh
+endif
+

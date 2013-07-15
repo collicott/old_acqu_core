@@ -1,0 +1,29 @@
+##--Rev 	JRM Annand...10th Feb 2007
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+## Registers...24 in total
+##              Hex Base	#Registers	Module type
+BaseSetup:	0xE0000000	24		S-Ctrl
+##
+##		Hex Offset  DW         AM	Datum	Number
+## Thresholds Bits 0-7 for thresh -1 to -255 mV 
+Register: 	0           16         09	10	16
+## Output width channels 0-7, 255 = 40ns, 0 = 5ns
+Register:	0x40        16         09	255
+## Output width channels 8-15
+Register:	0x42        16         09	255
+## Majority threshold...maj-level 1
+Register: 	0x48        16         09	6
+## Pattern inhibit register. Bits 0-15, set = channel enabled
+Register:	0x4A        16         09	0xffff
+## Generate test pulse
+Register:	0x4C	    16	       09
+## ID code
+Register:	0xFA        16         09
+## More ID
+Register:	0xFC        16         09
+## Version/Serial
+Register:	0xFE        16         09

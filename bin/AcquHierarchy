@@ -1,0 +1,135 @@
+#!/bin/sh 
+#A recursive program to print out the hierarchy of setup files for Acqu.
+print_usage()
+{
+    echo
+    echo "Description: A utility to print out the hierarchy of Acqu setup files"
+    echo
+    echo "Usage: AcquHierarchy [-v|-vv] <setup file>"
+    echo
+    echo "       -v = verbose - prints all lines with keywords"
+    echo "       -vv = verbose - prints all lines including comments"
+    echo 
+    echo "Some examples:"
+    echo "On the analysis side:"
+    echo ">AcquHierarchy  ROOTSetup.dat                        # print tree of setup files"
+    echo ">AcquHierarchy  -v Tagger.dat                        # print all keyword lines from setup files"
+    echo ">AcquHierarchy  -v ROOTSetup.dat | grep -v Element   # print all key word lines except Elements"
+    echo ">AcquHierarchy  -vv ROOTSetup.dat                    # print all lines from whole tree of setup files"
+    echo 
+    echo "On the VME side:"
+    echo ">AcquHierarchy  vme_setup.d                          # print tree of setup files"
+    echo ">AcquHierarchy  -vv vme_setup.d                      # print all lines from tree of setup files"
+    echo 
+    echo "Warning: only picks up setupfiles with a ""data/"" or a "".dat"" in the name"
+    exit
+}
+verbose="none"
+level="0"
+# parse the arguments
+
+if [ $# -gt 3 -o $# == 0 ]; then
+    print_usage
+fi
+
+if [ $# -gt 0 ]; then
+    dash=`echo $1 | cut -b1`
+    if [ $dash == "-" ]; then
+	if [ $1 == "-v" ]; then
+	    verbose=$1
+	elif [ $1 == "-vv" ]; then
+	    verbose=$1
+	else
+	    print_usage
+	fi
+    fi
+    if [ $verbose != "none" ]; then
+	if [ $# -eq 3 ]; then
+	    file=$2
+	    level=$3
+	elif  [ $# -eq 2 ]; then
+	    file=$2
+	else
+	    print_usage
+	fi
+    else
+	verbose=""
+	if [ $# -eq 2 ]; then
+	    file=$1
+	    level=$2
+	elif  [ $# -eq 1 ]; then
+	    file=$1
+	else
+	    print_usage
+	fi
+    fi
+fi
+
+
+
+#if no level specified, it's 1st call, print top level file name
+if [ $level == "0" ]; then
+    echo $file
+    if [ $1 == "-v" -o $1  == "-vv" ]; then
+	echo "********************************************************************************"
+    fi
+fi
+
+exe=$0
+#if file isn't in cwd, check in the data directory
+if [ -f $file ]; then
+f=0;
+else
+    file=data/$file
+fi
+#if the file exists
+if [ -f $file ]; then
+#loop though every non-comment line, and call this script recursively for fields with a "/data/"
+#or .dat"
+gawk -v exe=$exe -v verb=$verbose -v level=$level '
+BEGIN{                                  #comment
+level++;                                #increment the depth  
+} 
+{
+if(verb=="-vv"){                        #very verbos, print out every line in every file
+    for(l=0;l<level;l++){               #indent according to depth
+	printf"    ";
+    }
+    printf"%s\n",$0;
+}    
+if(($1 !~ "*")&&($1 !~ "#")){           #check for comment lines
+    if($4~":"){                         #check for run files on basis of colon in date
+        exit;
+    }
+    if((verb=="-v")&&($0~":")){         #verbose, print all keyword lines (ie with ":" in 1st field) 
+	for(l=0;l<level;l++){           #indent according to depth
+	   printf"    ";
+	}
+	printf"%s\n",$0;
+    }
+
+    for(n=1;n<=NF;n++){                   #check all fields in the line
+	if(($n~".dat")||($n~"data/")){    
+	    for(l=0;l<level;l++){     #indent according to depth
+		printf"    ";
+	    }
+	    if(verb!=""){
+		for(k=level;k<20;k++){
+		    printf"****";
+		}
+		printf"\n";
+	    }
+	    for(l=0;l<level;l++){     #indent according to depth
+		printf"    ";
+	    }
+	    printf"%s\n",$n;
+	    com=sprintf("%s %s %s %s",exe,verb,$n,level);  #construct command to call this script again
+	    system(com);                  #call the script
+	}
+    }
+}
+}' $file
+
+else
+    exit
+fi

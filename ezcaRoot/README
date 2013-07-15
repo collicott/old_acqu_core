@@ -1,0 +1,20 @@
+rootEzca - Ken Livingston Oct 2012 (Kenneth.Livingston.glasgow.ac.uk)
+
+libRootEzca.so - a root wrapper library for libezca the EPICS channel access library.
+
+Requirements.
+EPICS Base and Extensions need to be installed, and the environment variables set up
+eg.
+setenv EPICS_BASE "/home/epics/base"
+setenv EPICS_EXTENSIONS "/home/epics/extensions"
+setenv EPICS_HOST_ARCH "linux-x86_64"
+
+Root needs to be installed and ROOTSYS evn variable defined.
+To build ./lib/${EPICS_HOST_ARCH}/libRootEzca.so
+
+>make clean
+>make will build in the current directory.
+
+See the example macros for how to access EPICS channels.
+
+

@@ -1,0 +1,17 @@
+##--Author	JRM Annand	 3rd Mar 2006
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+##              Dummy Base	#Registers	Module type
+BaseSetup:	0		3		SlowCtrl
+##
+## Enter CNAFS
+##		Datum	F	A0	A1	Register Type
+CAMAC-CNAF:	0	26	9	9	Init	
+CAMAC-CNAF:	0	24	9	9	Init	
+CAMAC-CNAF:	0	27	9	9	Test
+##
+#	End of File
+#

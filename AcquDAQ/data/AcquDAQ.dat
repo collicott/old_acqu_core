@@ -1,0 +1,35 @@
+##--Rev 	JRM Annand... 1st Oct 2005  New DAQ software
+##--Update	JRM Annand...
+##--Description
+##                *** AcquDAQ++ <-> Root ***
+## DAQ for Sub-Atomic Physics Experiments.
+##
+## Description of experiment...held in data header
+Description: Test of AcquDAQ 4v4
+Mk1-Format:
+## Data output specification
+##         Name			#Buff  #Rec	Rec-Len	Mode  Packet-Len  IP 
+#File-Name: /scratch/acqu/AcquDAQ 32	50000	32768	Disk  32768       3010
+File-Name: /scratch/acqu/AcquDAQ 32	50000	32768	ENet  32768       3010
+##				Scaler	Slow-Ctrl
+Event-Counters:		100	0
+Start-Run: 0
+Control:  Local    0     0
+#Control:   ENet	    localhost 3020
+##
+Module:	CAEN_V2718	v2718_0	v2718.dat	0		0
+#Module: CBD_8210	cbd_0	cbd8210_0.dat   800000		0	0
+#Module: CAMAC		a2_0	a2ctrl_0.dat	1		3	0
+#Module: LRS_4508	mlu_0	lrs4508_0.dat	1		4
+#Module: LRS_2373	mlu_1	lrs2373_0.dat	1		5
+#Module: VMEbus  	disc_0	v895_0.dat	e0000000	5	16
+#Module: CAEN_V792	v792_0	v792_0.dat	ee000000	100	32
+Module: Virtual		vADC_0	vADC_0.dat	ADC	200	32	12
+Module: Virtual		vSCA_0	vSCA_0.dat	Scaler	200	32	24
+Module: Virtual		vIRQ_0	vIRQ_0.dat	S-Ctrl	0	0	16
+#
+#IRQ-Ctrl: cbd_0
+IRQ-Ctrl: vIRQ_0
+#
+#	End of File
+#

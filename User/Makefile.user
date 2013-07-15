@@ -1,0 +1,183 @@
+#-----------------------------------------------------------------------------
+#
+#                     *** Acqu++ <-> Root ***
+#
+#    Online/Offline Analysis of Sub-Atomic Physics Experimental Data.
+#
+#		************* Makefile ****************
+#
+#			     GNU Version
+#
+#	Unix/GNU  makefile to compile and link software modules
+#	of the online/offline  data acquisition system
+#	For User Code ONLY
+#
+#	JRM Annand	 6th Jan 2004	For user code
+#       JRM Annand      18th Nov 2004   Add htmldoc...make docs
+#       JRM Annand      11th Feb 2005   KL mod to docs
+#       JRM Annand      22nd Jan 2007   4v0 update
+#       JRM Annand      25th Aug 2007   4v1 update/bug-fix
+#	JRM Annand	18th Nov 2007	ROOT includes after Acqu
+#
+#----------------------------------------------------------------------------
+# Directories
+#
+IR = $(ROOTSYS)/include
+O = $(acqu_sys)/obj/$(ACQU_OS_NAME)
+UO = $(acqu)/obj/$(ACQU_OS_NAME)
+B = $(acqu)/bin/$(ACQU_OS_NAME)
+L = $(acqu_sys)/lib/$(ACQU_OS_NAME)
+UL = $(acqu)/lib/$(ACQU_OS_NAME)
+AR = $(acqu_sys)/AcquRoot/src
+MC = $(acqu_sys)/AcquMC/src
+UMC = $(UAR)
+DAQ = $(acqu_sys)/AcquDAQ/src
+UAR = $(acqu)/root/src
+D = $(acqu)/deps/$(ACQU_OS_NAME)
+
+#
+# ROOT libraries etc.
+#
+ROOTLIBS     := $(shell root-config --glibs) -lEG
+ROOTGLIBS    := $(shell root-config --glibs)
+ROOTCFLAGS   := $(shell root-config --auxcflags)
+#
+# Compile/Link Flags
+#
+CXXFLAGS      = $(acqu_debug) -c -Wall -fPIC $(ROOTCFLAGS)
+LDXXFLAGS = $(acqu_debug) -shared -o $(UL)/$@
+#INCFLAGS  = -I$(IR)
+#
+CLEANMOD = $B/AcquRoot $B/AcquMC
+#-----------------------------------------------------------------------------
+#
+#	Do the whole lot
+#
+all: AcquRoot AcquMC docs
+#
+#	Get rid of all binaries and obj 
+veryclean: clean
+	@rm -f $(UL)/lib*.so
+	@rm -f $(CLEANMOD)
+	@rm -f *.log
+	@rm -f *DBdump.*
+	@rm -f $(D)/*.d
+	@rm -rf htmldoc
+	@echo Acqu++ Flush Complete
+ultraclean: veryclean
+	@rm -f ./*~
+	@rm -f $(UAR)/*.cc~
+	@rm -f $(UAR)/UserDict.*
+	@rm -f $(UAR)/MCUserDict.*
+	@rm -f $(UAR)/*.h~
+	@rm -f $(UAR)/#*#
+	@rm -f $(UAR)/../macros/*.C~
+	@echo  Acqu++ Purge Complete
+#
+clean:
+	@rm -f $(UO)/* core*
+	@echo Binaries and Cores deleted
+#
+vpath %.cc $(UAR)
+vpath %.h $(UAR):$(AR):$(MC)
+vpath %.o $(UO)
+vpath %.d $(D)
+#
+# Acqu-Root
+# Attempt to compile and link to a shared library any user classes
+#
+UCl = $(wildcard $(UAR)/TA2*.cc)
+UCl_t = $(wildcard $(UAR)/*_t.cc)
+USrc = $(UCl) $(UCl_t) $(UAR)/UserDict.cc
+UInc = $(patsubst $(UAR)/%.cc, $(UAR)/%.h, $(UCl))
+UObjD = $(patsubst $(UAR)/%.cc, $(UO)/%.o, $(USrc))
+UObj = $(notdir $(UObjD))
+UDep = $(patsubst $(UAR)/%.cc, $(D)/%.d, $(UCl)) $(UAR)/MainAcquRoot.d
+UDepInc = -I$(UAR) -I$(AR)
+#
+UMCCl = $(wildcard $(UAR)/TMC*.cc)
+UMCSrc = $(UMCCl) $(UAR)/MCUserDict.cc
+UMCInc = $(patsubst $(UAR)/%.cc, $(UAR)/%.h, $(UMCCl))
+UMCObjD = $(patsubst $(UAR)/%.cc, $(UO)/%.o, $(UMCSrc))
+UMCObj = $(notdir $(UMCObjD))
+UMCDep = $(patsubst $(UAR)/%.cc, $(D)/%.d, $(UMCCl)) $(UAR)/MainAcquMC.d
+UMCDepInc = -I$(UAR) -I$(AR) -I$(MC)
+#INCFLAGS += -I$(UAR) -I$(AR) -I$(MC)
+INCFLAGS += -I$(UAR) -I$(AR) -I$(MC) -I$(IR)
+#
+#
+print:
+	@echo "$(USrc)"
+	@echo "$(UInc)"
+	@echo "$(UObj)"
+	@echo "Done"
+
+# Make gzipped tarball of source and setup files
+Ad = acqu
+archive:
+	cd ; tar --exclude *~ -zcvf $(HOME)/$(acquversionID)_UserSetup.tar.gz \
+	$(Ad)/root/src/*.cc $(Ad)/root/src/*.h \
+	$(Ad)/root/macros/*.C \
+	$(Ad)/data/* $(Ad)/Makefile
+	chmod a-x $(HOME)/$(acquversionID)_UserSetup.tar.gz
+
+libUserRoot.so: $(UObj)
+	$(CCCOMP) $(LDXXFLAGS) $(UObjD)
+	@echo "$@ done"
+	@echo "##-----------------------------------------------------------"
+libMCUserRoot.so: $(UMCObj)
+	$(CCCOMP) $(LDXXFLAGS) $(UMCObjD)
+	@echo "$@ done"
+	@echo "##-----------------------------------------------------------"
+
+AcquRoot: MainAcquRoot.o libUserRoot.so
+	$(CCCOMP) $(acqu_debug)  $(UO)/MainAcquRoot.o \
+	$L/libAcquRoot.so $(UL)/libUserRoot.so \
+	$L/libAcquDAQ.so $(CAENVME_LIB) \
+	$(ROOTLIBS) -lThread \
+	-o $(B)/AcquRoot
+	@echo "$@ done"
+	@echo "##-----------------------------------------------------------"
+
+AcquMC: MainAcquMC.o libMCUserRoot.so libUserRoot.so
+	@rm -f $(UAR)/MCUserDict.*
+	$(CCCOMP) $(acqu_debug)  $(UO)/MainAcquMC.o \
+	$L/libAcquRoot.so $(UL)/libUserRoot.so $(L)/libAcquMC.so \
+	$(UL)/libMCUserRoot.so \
+	$L/libAcquDAQ.so $(CAENVME_LIB) \
+	$(ROOTLIBS) -lThread -lFoam \
+	-o $(B)/AcquMC
+	@echo "$@ done"
+	@echo "##-----------------------------------------------------------"
+
+docs:
+	@echo " Invoking ROOT html automatic documentation"
+	@rm -rf $(acqu)/htmldoc
+	@cd $(acqu)
+	root -b -n -q htmldocU.C
+## Not needed if htmldoc.C employs THtml::MakeAll()
+##	ln -s $(acqu_sys)/htmldoc/*.* $(acqu)/htmldoc/
+##	ln -s $(acqu_sys)/htmldoc/src/*.* $(acqu)/htmldoc/src/
+
+$(UAR)/UserDict.cc: $(UInc) UserLinkDef.h
+	@echo "Generating dictionary $@..."
+	@rootcint  -f $@ -c $(INCFLAGS) $^
+	@echo "##-----------------------------------------------------------"
+
+$(UAR)/MCUserDict.cc: $(UMCInc) MCUserLinkDef.h
+	@echo "Generating dictionary $@..."
+	@rootcint  -f $@ -c $(INCFLAGS) $^
+	@echo "##-----------------------------------------------------------"
+
+%.o: %.cc
+	$(CCCOMP) $(CXXFLAGS) $(INCFLAGS) \
+	-o $(UO)/$@ -c $< 
+#
+# Check the "ox"
+$(D)/%.d: %.cc
+	@echo Making dependencies for $<
+	@$(SHELL) -ec 'gcc -MM $(INCFLAGS) -c $< \
+		| sed '\''s%^.*\.ox%$*\.o%g'\'' \
+		| sed '\''s%\($*\)\.o[ :]*%\1.o $@ : %g'\'' > $@; \
+		[ -s $@ ] || rm -f $@'
+-include $(UDep) $(UMCDep)

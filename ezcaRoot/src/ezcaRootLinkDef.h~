@@ -1,0 +1,18 @@
+#ifdef __CINT__
+
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+
+#pragma link C++ enum EEpicsTypes;
+
+#pragma link C++ function epicsGet;
+#pragma link C++ function epicsGetControlLimits;
+#pragma link C++ function epicsGetGraphicLimits;
+#pragma link C++ function epicsGetNelem;
+#pragma link C++ function epicsGetPrecision;
+#pragma link C++ function epicsGetUnits;
+#pragma link C++ function epicsPut;
+#pragma link C++ function epicsPutOldCa;
+
+#endif

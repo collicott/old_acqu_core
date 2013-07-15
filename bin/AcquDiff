@@ -1,0 +1,139 @@
+#!/bin/tcsh 
+#
+#	Simple utility to get differences in
+#	AcquRoot versions
+#	usage AcquDiff dir1 dir2
+#
+if ( $#argv != 2 ) then
+    echo Utility to highlight CC-code differences in AcquRoot versions
+    echo Usage....AcquDiff dirspec1 dirspec2
+    exit
+endif
+set src1 = ~/${1}/acqu/AcquDAQ/src/
+set src2 = ~/${2}/acqu/AcquDAQ/src/
+set out = ~/AcquDiff/AcquDAQ/
+echo Comparing directories $src1 -- $src2 into $out
+#
+#  Check directories for output
+#
+if ( ! -e $out ) mkdir $out
+#
+#  List of files to compare
+#
+set daqsrc = ( \
+DAQDict.cc       TDAQcontrol.cc     TFB_1821SMI.cc        TVME_GeSiCA.cc \
+DAQMemMap_t.cc   TDAQexperiment.cc  TFBmodule.cc          TVME_KPhSMI.cc \
+MainAcquDAQ.cc   TDAQguiCtrl.cc     TGUIsupervise.cc      TVMEmodule.cc \
+MainHV.cc        TDAQ_KPhI686.cc    TVirtualModule.cc     TVME_V1190.cc \
+RSupervise.cc    TDAQmodule.cc      TVME_CATCH.cc         TVME_V775.cc \
+TCAMAC_2323.cc   TDAQstore.cc       TVME_CATCH_Scaler.cc  TVME_V792.cc \
+TCAMAC_2373.cc   TDAQsupervise.cc   TVME_CATCH_TCS.cc \
+TCAMAC_4508.cc   TDAQ_SY1527.cc     TVME_CATCH_TDC.cc \
+TCAMACmodule.cc  TDAQ_V2718.cc      TVME_CBD8210.cc \
+AcquDAQLinkDef.h  TCAMACmodule.h    TDAQ_V2718.h         TVME_CBD8210.h \
+caen792.h         TDAQcontrol.h     TFB_1821SMI.h        TVME_GeSiCA.h \
+DAQDict.h         TDAQexperiment.h  TFBmodule.h          TVME_KPhSMI.h \
+DAQMemMap_t.h     TDAQguiCtrl.h     TGUIsupervise.h      TVMEmodule.h \
+HV_1932_t.h       TDAQ_KPhI686.h    TVirtualModule.h     TVME_V1190.h \
+ModuleIndex.h     TDAQmodule.h      TVME_CATCH.h         TVME_V775.h \
+TCAMAC_2323.h     TDAQstore.h       TVME_CATCH_Scaler.h  TVME_V792.h \
+TCAMAC_2373.h     TDAQsupervise.h   TVME_CATCH_TCS.h     VmeMap.h \
+TCAMAC_4508.h     TDAQ_SY1527.h     TVME_CATCH_TDC.h \
+)
+set arsrc = ( \
+TA2DataManager.cc       TA2Mk1Format.cc \
+ARFile_t.cc            TA2DataServer.cc        TA2Mk2Format.cc \
+ARSocket_t.cc          TA2DataSource.cc        TA2MultiCut.cc \
+BitPattern_t.cc        TA2Detector.cc          TA2NetSource.cc \
+GenHitCluster_t.cc     TA2FileSource.cc        TA2Particle.cc \
+HitCluster_t.cc        TA2GenericApparatus.cc  TA2ParticleID.cc \
+HitD2A_t.cc            TA2GenericCluster.cc    TA2Physics.cc \
+LongBar_t.cc           TA2GenericDetector.cc   TA2RateMonitor.cc \
+MainAcquRoot.cc        TA2GenericPhysics.cc    TA2RingBuffer.cc \
+TA2Analysis.cc         TA2H1.cc                TA2System.cc \
+TA2Apparatus.cc        TA2H1S.cc               TA2Tagger.cc \
+TA2BitPattern.cc       TA2H2.cc                TA2TAPSFormat.cc \
+TA2ClusterDetector.cc  TA2H.cc                 TA2TOFApparatus.cc \
+TA2Control.cc          TA2HistManager.cc       TA2Track.cc \
+TA2Cut.cc              TA2Ladder.cc            TA2WCLayer.cc \
+TA2CylStrip.cc         TA2List.cc              TA2WireChamber.cc \
+TA2CylWire.cc          TA2LocalSource.cc       TAcquRoot.cc \
+TA2DataFormat.cc       TA2LongScint.cc         TapeDir.cc \
+TA2BitPattern.h        TA2List.h \
+AcquRootLinkDef.h  TA2ClusterDetector.h   TA2LocalSource.h \
+AcquStatus_t.h     TA2Control.h           TA2LongScint.h \
+ARFile_t.h         TA2Cut1D.h             TA2Mk1Format.h \
+ARSocket_t.h       TA2Cut2D.h             TA2Mk2Format.h \
+BitPattern_t.h     TA2Cut.h               TA2MultiCut.h \
+CatchTDC_t.h       TA2CylStrip.h          TA2_N2V.h \
+Cut_t.h            TA2CylWire.h           TA2NetSource.h \
+D2A_t.h            TA2DataFormat.h        TA2Particle.h \
+DataFormats.h      TA2DataManager.h       TA2ParticleID.h \
+EdgeFit_t.h        TA2DataServer.h        TA2Physics.h \
+EnumConst.h        TA2DataSource.h        TA2RateMonitor.h \
+FlashADC_t.h       TA2Detector.h          TA2RingBuffer.h \
+GenHitCluster_t.h  TA2FileSource.h        TA2System.h \
+HitCluster_t.h     TA2GenericApparatus.h  TA2Tagger.h \
+HitD2A_t.h         TA2GenericCluster.h    TA2TAPSFormat.h \
+LongBar_t.h        TA2GenericDetector.h   TA2TOFApparatus.h \
+MCBranchID.h       TA2GenericPhysics.h    TA2Track.h \
+ModuleIndex.h      TA2H1.h                TA2WCLayer.h \
+MultiADC_t.h       TA2H1S.h               TA2WireChamber.h \
+Semaphore_t.h      TA2H2.h                TAcquFile.h \
+SG3sumADC_t.h      TA2H3.h                TAcquRoot.h \
+SwapBytes.h        TA2H.h                 TimeWalk_t.h \
+TA2Analysis.h      TA2HistManager.h \
+TA2Apparatus.h     TA2Ladder.h \
+)
+set mcsrc = ( \
+MainAcquMC.cc    TMCdS5MDMParticle.cc  TMCGenerator.cc         TMCResonance.cc \
+TMCFoamGenerator.cc   TMCParticle.cc \
+TMCDgpInt.cc     TMCFoamInt.cc         TMCPhotoPSGenerator.cc \
+TMCdS5MDMInt.cc  TMCFoamParticle.cc    TMCPhotoPSInt.cc \
+TMCdS5MDMInt.h       TMCFoamParticle.h      TMCPhotoPSInt.h \
+MCLinkDef.h  TMCdS5MDMParticle.h  TMCGenerator.h         TMCResonance.h \
+MCNtuple.h   TMCFoamGenerator.h   TMCParticle.h \
+TMCDgpInt.h  TMCFoamInt.h         TMCPhotoPSGenerator.h \
+)
+#
+#  Init no. of files to compare and loop doing the comparison
+#
+@ i = $#daqsrc
+while ( $i )
+	diff $src1/$daqsrc[$i] $src2/$daqsrc[$i] > $out/$daqsrc[$i]
+	if ( -z $out/$daqsrc[$i] ) then
+		echo No change $daqsrc[$i]
+		rm $out/$daqsrc[$i]
+	endif
+	echo $i
+	@ i--
+end
+set src1 = ~/${1}/acqu/AcquRoot/src/
+set src2 = ~/${2}/acqu/AcquRoot/src/
+set out = ~/AcquDiff/AcquRoot/
+@ i = $#arsrc
+while ( $i )
+	diff $src1/$arsrc[$i] $src2/$arsrc[$i] > $out/$arsrc[$i]
+	if ( -z $out/$arsrc[$i] ) then
+		echo No change $arsrc[$i]
+		rm $out/$arsrc[$i]
+	endif
+	echo $i
+	@ i--
+end
+set src1 = ~/${1}/acqu/AcquMC/src/
+set src2 = ~/${2}/acqu/AcquMC/src/
+set out = ~/AcquDiff/AcquMC/
+@ i = $#mcsrc
+while ( $i )
+	diff $src1/$mcsrc[$i] $src2/$mcsrc[$i] > $out/$mcsrc[$i]
+	if ( -z $out/$mcsrc[$i] ) then
+		echo No change $mcsrc[$i]
+		rm $out/$mcsrc[$i]
+	endif
+	echo $i
+	@ i--
+end
+##
+##a2ps -4 -Afill -odiff.ps src/c/*.c src/cc/*.cc src/f/*.f include/c/*.h include/cc/*.h bin/* Makefile acqu_setup
+exit

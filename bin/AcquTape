@@ -1,0 +1,34 @@
+#!/bin/sh
+#If not 2 args then print usage
+if [ $# -ne 2 ]; then
+    echo "usage: acqutape <DRIVENUM> <DIR>"
+    echo "       DRIVENUM = 0 or 1"
+    echo "       DIR = full path to directory where files should go"
+    echo ""
+    echo "Copies all .dat files from /dev/nst<DRIVENUM> to DIR using dd with blocksize = 32k"
+    echo ".... preserving original filenames"
+    echo
+exit
+fi
+
+TAPE=$1
+DIR=$2
+#check to see if end of tape
+where=`mt -f /dev/nst${TAPE} status | gawk ' $0~"EOD" {print "EOD"}'`
+#while not end of tape
+while [ "$where" != "EOD" ]; do
+    #copy the file with temp name
+    dd if=/dev/nst${TAPE} of=$DIR/tempfile.dat bs=32k
+    #extract the original name (including original path)
+    longfilename=`head ${DIR}/tempfile.dat | grep -a .dat | strings`
+    #strip off the original path to leave the filename
+    filename=`basename $longfilename`
+    #move the temp file to file of the original name
+    mv $DIR/tempfile.dat $DIR/$filename
+    #check whether end of medium reached
+    where=`mt -f /dev/nst${TAPE} status | gawk ' $0~"EOD" {print "EOD"}'`
+    if [ "$where" == "EOD" ]; then
+	exit
+    fi
+done 
+exit

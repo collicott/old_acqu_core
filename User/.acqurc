@@ -1,0 +1,63 @@
+#!/bin/tcsh
+################################################################
+#	User-specific ACQU setup
+#	All variables listed here MUST be initialised....
+#       acqu_site
+#	ACQU_SYSROOT
+#       acqu_usesubdirs
+#	CPUTYPE
+#	CCCOMP
+#	ACQUROOT
+#       Optional: CCCOMP (if using any C++ code)
+#       Optional: acqu_debugger (if you intend to do any debugging0
+#
+#       THIS FILE MUST RESIDE IN YOUR HOME DIRECTORY
+#
+###############################################################
+#
+#       Where are you running ACQU?
+#
+	setenv acqu_site $HOST
+#
+#	Base directory for ACQU system directory
+#
+	setenv ACQU_SYSROOT /home/acqu/$acquversion
+#
+#       Specify if architecture-dependent binaries sub-directories
+#
+#	setenv acqu_usesubdirs YES
+	setenv acqu_usesubdirs NO
+#
+#	Base directory for CERNlib, no longer used
+#
+	setenv CERNROOT /cern/dev
+#
+#	Platform ACQU is run on...supported types
+#	__LINUX, __SPARC, __OSF
+#
+	setenv CPUTYPE __LINUX
+#
+#	Compiler types...recommend g++, C, Fortran no longer used
+#
+	setenv CCOMP gcc
+	setenv FCOMP g77
+        setenv CCCOMP g++
+#	setenv RCCCFLAGS '-fno-rtti -fno-exceptions -fPIC'
+	setenv RCCCFLAGS ' '
+#
+#	Personal ACQU root directory
+#       ACQU system ONLY
+#	setenv ACQUROOT $ACQU_SYSROOT
+#       Normal ACQU user
+	setenv ACQUROOT ~
+#
+#       Where the X libraries are
+        setenv XLIB /usr/X11R6/lib
+#
+#       Debugger...recommend gdb 
+        setenv acqu_debugger ddd
+#       Set this flag if you want to debug code
+#       otherwise comment it out
+	setenv acqu_debug -g
+#
+	echo User-specific ACQU environment for site $acqu_site set
